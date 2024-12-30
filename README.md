@@ -27,4 +27,4 @@ Có thể tạo account với 3 role là ADMIN, STUDENT, TEACHER.
   - Được phép thêm/xóa/sửa tất cả các object trong ứng dụng.
 
 ## Demo
-![demo](media/demo.mkv)
+![demo](media/demo.mp4)
