@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Exam</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<nav th:replace="~{layout::page_nav}"></nav>
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-6 col-md-6 col-sm-6 container justify-content-center card">
+
+            <div th:if="${exam.id == null}">
+                <h1 class="text-center">Add New Exam</h1>
+            </div>
+
+            <div th:unless="${exam.id == null}">
+                <h1 class="text-center">Edit Exam</h1>
+            </div>
+
+            <div class="card-body">
+                <form method="post" th:action="${exam.id}==null ? @{/exam} : @{/exam/edit/{id} (id=${exam.id})}" th:object="${exam}">
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Exam Name
+                        </label>
+                        <input class="form-control" type="text" name="classname" th:field="*{examname}" placeholder="Enter Your Exam Name"/>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Weight
+                        </label>
+                        <input class="form-control" type="number" name="weight" th:field="*{weight}" placeholder="Weight" min="0"
+                               max="1" step="0.05"/>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Score
+                        </label>
+                        <input class="form-control" type="number" name="weight" th:field="*{score}" placeholder="Score" min="0"
+                               max="10" step="0.05"/>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Exam Date
+                        </label>
+                        <input class="form-control" type="datetime-local" name="examdate" th:field="*{examdate}" placeholder="Date"/>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Duration
+                        </label>
+                        <input class="form-control" type="number" name="duration" th:field="*{duration}" placeholder="Minute" min="0"
+                               max="1440" step="0.05"/>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Class:
+                        </label>
+                        <select class="form-control" th:field="*{classes}" required>
+                            <option th:each="class : ${classes}"
+                                    th:value="${class.id}"
+                                    th:text="${class.classname}"></option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Student:
+                        </label>
+                        <select class="form-control" th:field="*{student}" required>
+                            <option th:each="student : ${students}"
+                                    th:value="${student.id}"
+                                    th:text="${student.fullname}"></option>
+                        </select>
+                    </div>
+
+
+                    <div class="box-footer">
+                        <button type="submit" class="btn btn-primary">
+                            <div th:if="${exam.id == null}">Add</div>
+                            <div th:unless="${exam.id == null}">Update</div>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html>

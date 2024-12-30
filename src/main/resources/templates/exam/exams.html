@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <meta charset="UTF-8">
+    <title>Exams</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+<body>
+
+<nav th:replace="~{layout::page_nav}"></nav>
+
+<div class="container">
+    <div class="row">
+
+        <div th:if="${class.id == null}">
+            <h1 class="text-center">Exam List Management</h1>
+        </div>
+
+        <div th:unless="${class.id == null}" sec:authorize="!hasRole('ROLE_STUDENT')">
+            <h1>Exam list of class: [[${class.classname}]]</h1>
+            <a th:href="@{/class/{classid}/exams/generatecsv (classid=${class.id})}">Generate csv template for this class.</a>
+            <form method="post" th:action="@{/class/{classid}/exams/upload (classid=${class.id})}" enctype="multipart/form-data">
+                <label for="file">Import data from csv file:</label>
+                <input type="file" id="file" name="file" accept=".csv" required>
+                <br/>
+                <button type="submit">Upload</button>
+            </form>
+            <br/><br>
+        </div>
+
+        <div th:if="${msg != null}" class="alert alert-success alert-dismissible fade show" role="alert" id="msg">
+            <strong>[[${msg}]]</strong>
+        </div>
+
+        <div class="col-lg-3">
+            <a th:href="${class.id}==null ? @{/exam/new} : @{/exam/new/{classid} (classid=${class.id})}" class="btn btn-primary" sec:authorize="!hasRole('ROLE_STUDENT')">Add New Exam</a>
+            <br/><br/>
+        </div>
+
+        <div>
+            <form th:action="@{/exam/page/1}">
+                <input type="hidden" name="sortField" th:value="${sortField}"/>
+                <input type="hidden" name="sortDir" th:value="${sortDir}"/>
+                Filter:
+                <input type="text" name="keyword" th:value="${keyword}" required/>
+                &nbsp;
+                <input type="submit" value="Search"/>
+                &nbsp;
+                <input type="button" value="Clear"/>
+            </form>
+            <br/><br/>
+        </div>
+
+        <table class="table table-striped">
+            <thead>
+            <tr class="table-active">
+                <th><a th:href="@{'/exam/page/' + ${currentPage} + '?sortField=id&sortDir=' + ${reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">ID Number</a></th>
+                <th><a th:href="@{'/exam/page/' + ${currentPage} + '?sortField=examname&sortDir=' + ${reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">Exam Name</a></th>
+                <th><a th:href="@{'/exam/page/' + ${currentPage} + '?sortField=weight&sortDir=' + ${reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">Weight</a></th>
+                <th><a th:href="@{'/exam/page/' + ${currentPage} + '?sortField=score&sortDir=' + ${reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">Score</a></th>
+                <th><a th:href="@{'/exam/page/' + ${currentPage} + '?sortField=examdate&sortDir=' + ${reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">Exam Date</a></th>
+                <th><a th:href="@{'/exam/page/' + ${currentPage} + '?sortField=duration&sortDir=' + ${reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">Duration</a></th>
+                <th><a th:href="@{'/exam/page/' + ${currentPage} + '?sortField=classes&sortDir=' + ${reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">Class</a></th>
+                <th><a th:href="@{'/exam/page/' + ${currentPage} + '?sortField=student.fullname&sortDir=' + ${reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">Student</a></th>
+                <th colspan="2" style="text-align: center">Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="exam: ${exams}">
+                <td th:text="${exam.id}"></td>
+                <td th:text="${exam.examname}"></td>
+                <td th:text="${exam.weight}"></td>
+                <td th:text="${exam.score}"></td>
+                <td th:text="${exam.examdate}"></td>
+                <td th:text="${exam.duration}"></td>
+                <td th:text="${exam.classes.classname}">
+                <td th:text="${exam.student.fullname}">
+                </td>
+                <td>
+                    <a th:href="@{/exam/edit/{id} (id=${exam.id})}" class="btn btn-success" sec:authorize="!hasRole('ROLE_STUDENT')">Edit</a>
+                </td>
+                <td>
+                    <a th:href="@{/exam/delete/{id} (id=${exam.id})}" class="btn btn-success" sec:authorize="!hasRole('ROLE_STUDENT')">Delete</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div th:if="${totalPages > 1}">
+            <div class="row col-sm-10">
+
+                <div class="col-sm-2">
+                    Total Rows: [[${totalItems}]]
+                </div>
+
+                <div class="col-sm-1">
+                    <span th:each="i: ${#numbers.sequence(1, totalPages)}">
+                        <a th:if="${currentPage != i}" th:href="@{'/exam/page/' + ${i} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">[[${i}]]</a>
+                        <span th:unless="${currentPage != i}">[[${i}]]</span> &nbsp; &nbsp;
+                    </span>
+                </div>
+
+                <div class="col-sm-1">
+                    <a th:if="${currentPage < totalPages}" th:href="@{'/exam/page/' + ${currentPage + 1} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">Next</a>
+                    <span th:unless="${currentPage < totalPages}">Next</span>
+                </div>
+
+                <div class="col-sm-1">
+                    <a th:if="${currentPage < totalPages}" th:href="@{'/exam/page/' + ${totalPages}+ '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">Last</a>
+                    <span th:unless="${currentPage < totalPages}">Last</span>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+</body>
+</html>

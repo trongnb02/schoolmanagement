@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head th:replace="~{layout::page_head}">
+    <title>View</title>
+</head>
+<body>
+<nav th:replace="~{layout::page_nav}"></nav>
+<br/><br/>
+<div class="container mt-5">
+    <h1 class="mb-4">Class: [[${class.classname}]]</h1>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        <div class="col" th:each="post : ${posts}">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h2 class="card-title">
+                        <a th:href="@{/post/detail/{postid}(postid=${post.id})}"
+                           th:text="${post.title}">Post Title</a>
+                    </h2>
+                    <p class="card-text">
+                        <strong>Last Updated:</strong> <span th:text="${post.lastmodified}">Date</span><br>
+                        <strong>Author:</strong> <span th:text="${post.author.fullname}">Author</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <meta charset="UTF-8">
+    <title>Add More Student To List</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+<body>
+
+<nav th:replace="~{layout::page_nav}"></nav>
+
+<div class="container">
+    <div class="row">
+        <div>
+            <h1 th:inline="text">
+                Add more student for Class: [[${class.classname}]]
+            </h1>
+        </div>
+
+        <div th:if="${msg != null}" class="alert alert-success alert-dismissible fade show" role="alert" id="msg">
+            <strong>[[${msg}]]</strong>
+        </div>
+
+        <table class="table table-striped">
+            <thead>
+            <tr class="table-active">
+                <th>ID Number</th>
+                <th>Full Name</th>
+                <th>Gender</th>
+                <th>Birthday</th>
+                <th>Email</th>
+                <th>Classes</th>
+                <th colspan="2" style="text-align: center">Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="student: ${students}">
+                <td th:text="${student.id}"></td>
+                <td th:text="${student.fullname}"></td>
+                <td th:text="${student.gender}"></td>
+                <td th:text="${student.birthdate}"></td>
+                <td th:text="${student.email}"></td>
+                <td th:text="${student.classes}"></td>
+
+                <td>
+                    <form th:action="@{/class/updatestudents/{classid}/add/{studentid} (studentid=${student.id},classid=${class.id})}" method="post">
+                        <button name="add" value="add" class="btn btn-success">Add</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    setTimeout(function () {
+        const alertElement = document.getElementById('msg');
+        if (alertElement) {
+            alertElement.classList.remove('show');
+            alertElement.classList.add('fade');
+        }
+    }, 2000);
+</script>
+
+</body>
+</html>
