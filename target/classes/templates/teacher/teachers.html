@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <meta charset="UTF-8">
+    <title>Teachers</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+<body>
+
+<nav th:replace="~{layout::page_nav}"></nav>
+
+<div class="container">
+    <div class="row">
+        <div><h1>List of Teachers</h1></div>
+
+        <div class="col-lg-3">
+            <a th:href="@{/teacher/new}" class="btn btn-primary" sec:authorize="!hasRole('ROLE_STUDENT')">Add New</a>
+            <br/><br/>
+        </div>
+
+        <div th:if="${msg != null}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>[[${msg}]]</strong>
+        </div>
+
+        <div>
+            <form th:action="@{/teacher/page/1}">
+                <input type="hidden" name="sortField" th:value="${sortField}"/>
+                <input type="hidden" name="sortDir" th:value="${sortDir}"/>
+                Filter:
+                <input type="text" name="keyword" th:value="${keyword}" required/>
+                &nbsp;
+                <input type="submit" value="Search"/>
+                &nbsp;
+                <input type="button" value="Clear"/>
+            </form>
+            <br/><br/>
+        </div>
+
+        <table class="table table-striped">
+            <thead>
+            <tr class="table-active">
+                <th><a th:href="@{'/teacher/page/' + ${currentPage} + '?sortField=id&sortDir=' + ${reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">ID Number</a></th>
+                <th><a th:href="@{'/teacher/page/' + ${currentPage} + '?sortField=fullname&sortDir=' + ${reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">Full Name</a></th>
+                <th><a th:href="@{'/teacher/page/' + ${currentPage} + '?sortField=gender&sortDir=' + ${reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">Gender</a></th>
+                <th><a th:href="@{'/teacher/page/' + ${currentPage} + '?sortField=birthdate&sortDir=' + ${reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">Birthday</a></th>
+                <th><a th:href="@{'/teacher/page/' + ${currentPage} + '?sortField=email&sortDir=' + ${reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">Email</a></th>
+                <th>Classes</th>
+                <th colspan="2" style="text-align: center">Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="teacher: ${teachers}">
+                <td th:text="${teacher.id}"></td>
+                <td th:text="${teacher.fullname}"></td>
+                <td th:text="${teacher.gender}"></td>
+                <td th:text="${teacher.birthdate}"></td>
+                <td th:text="${teacher.email}"></td>
+                <td th:text="${teacher.classesList}"></td>
+                <td>
+                    <a th:href="@{/teacher/edit/{id} (id=${teacher.id})}" class="btn btn-success" sec:authorize="hasRole('ROLE_ADMIN')">Edit</a>
+                </td>
+                <td>
+                    <a th:href="@{/teacher/delete/{id} (id=${teacher.id})}" class="btn btn-success" sec:authorize="hasRole('ROLE_ADMIN')">Delete</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div th:if="${totalPages > 1}">
+            <div class="row col-sm-10">
+
+                <div class="col-sm-2">
+                    Total Rows: [[${totalItems}]]
+                </div>
+
+                <div class="col-sm-1">
+                    <span th:each="i: ${#numbers.sequence(1, totalPages)}">
+                        <a th:if="${currentPage != i}" th:href="@{'/teacher/page/' + ${i} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">[[${i}]]</a>
+                        <span th:unless="${currentPage != i}">[[${i}]]</span> &nbsp; &nbsp;
+                    </span>
+                </div>
+
+                <div class="col-sm-1">
+                    <a th:if="${currentPage < totalPages}" th:href="@{'/teacher/page/' + ${currentPage + 1} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">Next</a>
+                    <span th:unless="${currentPage < totalPages}">Next</span>
+                </div>
+
+                <div class="col-sm-1">
+                    <a th:if="${currentPage < totalPages}" th:href="@{'/teacher/page/' + ${totalPages}+ '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">Last</a>
+                    <span th:unless="${currentPage < totalPages}">Last</span>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

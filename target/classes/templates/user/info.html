@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head th:replace="~{layout::page_head}">
+    <title>Infomation User</title>
+</head>
+<body>
+
+<nav th:replace="~{layout::page_nav}"></nav>
+
+<div class="container py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-6 container justify-content-center card">
+                <h1 class="text-center">Infomation:</h1>
+
+                <div class="card-body">
+                    <form th:object="${user}">
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Full Name
+                            </label>
+                            <input class="form-control" type="text" name="fullname" th:field="*{fullname}" placeholder="Enter Your Fullname" disabled/>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Username
+                            </label>
+                            <input class="form-control" type="text" name="gender" th:field="*{username}" placeholder="Username" disabled/>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Email
+                            </label>
+                            <input class="form-control" type="email" name="email" th:field="*{email}" placeholder="Email" disabled/>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="role">Role:</label>
+
+                            <select name="role" id="role" th:field="*{role}" DISABLED>
+                                <option value="ADMIN" th:selected="*{role} == 'ADMIN'">ADMIN</option>
+                                <option value="TEACHER" th:selected="*{role} == 'TEACHER'">TEACHER</option>
+                                <option value="STUDENT" th:selected="*{role} == 'STUDENT'">STUDENT</option>
+                            </select>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-6 container justify-content-center card">
+                <h1 class="text-center">Change password:</h1>
+                <div class="card-body">
+
+                    <div th:if="${msg != null}" class="alert alert-success alert-dismissible fade show" role="alert">
+                        <strong>[[${msg}]]</strong>
+                    </div>
+
+                    <form method="post" th:action="@{/user/changepassword}" th:object="${changePasswordRequest}">
+
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Current Password:
+                            </label>
+                            <input class="form-control" type="text" name="currentPassword" placeholder="Enter Your Current Password" required/>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">
+                                New Password
+                            </label>
+                            <input class="form-control" type="text" name="newPassword" placeholder="Enter Your New Password" required/>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Confirm New Password
+                            </label>
+                            <input class="form-control" type="text" name="confirmationPassword" placeholder="Enter New Password Again" required/>
+                        </div>
+
+                        <div class="box-footer">
+                            <button type="submit" class="btn btn-primary">Change</button>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+<body>
+
+<nav th:replace="~{layout::page_nav}"></nav>
+
+<div class="container">
+    <div class="row">
+        <div><h1>List of Classes</h1></div>
+
+        <div class="col-lg-3" sec:authorize="!hasRole('ROLE_STUDENT')">
+            <a th:href="@{/class/new}" class="btn btn-primary">Add New</a>
+            <br/><br/>
+        </div>
+
+        <div>
+            <form th:action="@{/class/page/1}">
+                <input type="hidden" name="sortField" th:value="${sortField}"/>
+                <input type="hidden" name="sortDir" th:value="${sortDir}"/>
+                Filter:
+                <input type="text" name="keyword" th:value="${keyword}" required/>
+                &nbsp;
+                <input type="submit" value="Search"/>
+                &nbsp;
+                <input type="button" value="Clear"/>
+            </form>
+            <br/><br/>
+        </div>
+
+        <table class="table table-striped">
+            <thead>
+            <tr class="table-active">
+                <th><a th:href="@{'/class/page/' + ${currentPage} + '?sortField=id&sortDir=' + ${reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">ID Number</a></th>
+                <th><a th:href="@{'/class/page/' + ${currentPage} + '?sortField=classname&sortDir=' + ${reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">Class Name</a></th>
+                <th><a th:href="@{'/class/page/' + ${currentPage} + '?sortField=subjectname&sortDir=' + ${reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">Subject Name</a></th>
+                <th><a th:href="@{'/class/page/' + ${currentPage} + '?sortField=credits&sortDir=' + ${reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">Credits</a></th>
+                <th><a th:href="@{'/class/page/' + ${currentPage} + '?sortField=startdate&sortDir=' + ${reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">Start Date</a></th>
+                <th><a th:href="@{'/class/page/' + ${currentPage} + '?sortField=enddate&sortDir=' + ${reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">End Date</a></th>
+                <th><a th:href="@{'/class/page/' + ${currentPage} + '?sortField=teacher.fullname&sortDir=' + ${reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">Teacher</a></th>
+                <th colspan="6" style="text-align: center">Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="class: ${classes}">
+                <td th:text="${class.id}"></td>
+                <td th:text="${class.classname}"></td>
+                <td th:text="${class.subjectname}"></td>
+                <td th:text="${class.credits}"></td>
+                <td th:text="${class.startdate}"></td>
+                <td th:text="${class.enddate}"></td>
+                <td th:text="${class.teacher != null ? class.teacher.fullname : 'N/A'}"></td>
+                <td>
+                    <a th:href="@{/class/updatestudents/{id} (id=${class.id})}" class="btn btn-success">Students</a>
+                </td>
+                <td>
+                    <a th:href="@{/class/{classid}/exams (classid=${class.id})}" class="btn btn-success">Exams</a>
+                </td>
+                <td>
+                    <a th:href="@{/class/view/{id} (id=${class.id})}" class="btn btn-success">View</a>
+                </td>
+                <td>
+                    <a th:href="@{/class/updateposts/{id} (id=${class.id})}" class="btn btn-success" sec:authorize="!hasRole('ROLE_STUDENT')">Posts</a>
+                </td>
+                <td>
+                    <a th:href="@{/class/edit/{id} (id=${class.id})}" class="btn btn-success" sec:authorize="hasRole('ROLE_ADMIN')">Edit</a>
+                </td>
+                <td>
+                    <a th:href="@{/class/delete/{id} (id=${class.id})}" class="btn btn-success" sec:authorize="hasRole('ROLE_ADMIN')">Delete</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div th:if="${totalPages > 1}">
+            <div class="row col-sm-10">
+
+                <div class="col-sm-2">
+                    Total Rows: [[${totalItems}]]
+                </div>
+
+                <div class="col-sm-1">
+                    <span th:each="i: ${#numbers.sequence(1, totalPages)}">
+                        <a th:if="${currentPage != i}" th:href="@{'/class/page/' + ${i} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">[[${i}]]</a>
+                        <span th:unless="${currentPage != i}">[[${i}]]</span> &nbsp; &nbsp;
+                    </span>
+                </div>
+
+                <div class="col-sm-1">
+                    <a th:if="${currentPage < totalPages}" th:href="@{'/class/page/' + ${currentPage + 1} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">Next</a>
+                    <span th:unless="${currentPage < totalPages}">Next</span>
+                </div>
+
+                <div class="col-sm-1">
+                    <a th:if="${currentPage < totalPages}" th:href="@{'/class/page/' + ${totalPages}+ '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">Last</a>
+                    <span th:unless="${currentPage < totalPages}">Last</span>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+</body>
+</html>

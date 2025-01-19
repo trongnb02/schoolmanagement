@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Student</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<nav th:replace="~{layout::page_nav}"></nav>
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-6 col-md-6 col-sm-6 container justify-content-center card">
+
+            <div th:if="${class.id == null}">
+                <h1 class="text-center">Add New Class</h1>
+            </div>
+
+            <div th:unless="${class.id == null}">
+                <h1 class="text-center">Edit Class</h1>
+            </div>
+
+            <div class="card-body">
+                <form method="post" th:action="${class.id}==null ? @{/class} : @{/class/edit/{id} (id=${class.id})}" th:object="${class}">
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Classname
+                        </label>
+                        <input class="form-control" type="text" name="classname" th:field="*{classname}" placeholder="Enter Your Class Name" required/>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Subjectname
+                        </label>
+                        <input class="form-control" type="text" name="subjectname" th:field="*{subjectname}" placeholder="Enter Your Subject Name" required/>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Credits
+                        </label>
+                        <input class="form-control" type="number" name="credits" th:field="*{credits}" placeholder="Enter Credits" min="0" max="50" step="1" required/>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Startdate
+                        </label>
+                        <input class="form-control" type="date" name="startdate" th:field="*{startdate}" placeholder="StartDate" required/>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Enddate
+                        </label>
+                        <input class="form-control" type="date" name="enddate" th:field="*{enddate}" placeholder="EndDate" required/>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Teacher:
+                        </label>
+                        <select class="form-control" th:field="*{teacher}">
+                            <option value="" th:text="'None selected'"></option>
+                            <option th:each="teacher : ${teachers}"
+                                    th:value="${teacher.id}"
+                                    th:text="${teacher.fullname}"></option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Students:
+                        </label>
+                        <select class="form-control" th:field="*{students}" multiple="multiple" th:disabled="${class.id != null}">
+                            <option th:each="student : ${students}"
+                                    th:value="${student.id}"
+                                    th:text="${student.fullname}"></option>
+                        </select>
+                    </div>
+
+
+                    <div class="box-footer">
+                        <button type="submit" class="btn btn-primary">
+                            <div th:if="${class.id == null}">Add</div>
+                            <div th:unless="${class.id == null}">Update</div>
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
